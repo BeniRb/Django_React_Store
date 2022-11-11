@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { sendOrders } from './OrderAPI';
+
 const initialState = {
     myCart: (JSON.parse(localStorage.getItem("myCart"))) ? (JSON.parse(localStorage.getItem("myCart"))) : ([]),
     id: 0,
@@ -18,10 +19,9 @@ export const addOrderAsync = createAsyncThunk('order/sendOrders',async (payload)
     initialState,
     reducers: {
       addItemToCart: (state, action) => {
-        console.log(action.payload)
-  
+        console.log("per 1 item",action.payload)
         let temp = state.myCart.find((x) => x._id === action.payload._id);
-        console.log(state.myCart.find((x) => x._id === action.payload._id))
+        // console.log(state.myCart.find((x) => x._id === action.payload._id))
         if (temp) {
           if (temp.amount === 1 && action.payload.amount === -1) {return state.myCart = state.myCart.filter(x => x._id !== temp._id),localStorage.setItem("myCart", JSON.stringify(state.myCart))}
           else {
@@ -32,13 +32,11 @@ export const addOrderAsync = createAsyncThunk('order/sendOrders',async (payload)
             // temp.total =  2* 2,
   
             localStorage.setItem("myCart", JSON.stringify(state.myCart))}
-        } else {
-          
-          console.log("no")
+        } 
+        else {
           state.myCart = [...state.myCart, action.payload]
         }
         localStorage.setItem("myCart", JSON.stringify(state.myCart))
-        console.table(state.myCart)
       },
   
       deleteCart: (state, action) => {

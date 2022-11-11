@@ -10,14 +10,35 @@ import {addOrderAsync, selectMyCart, addItemToCart, deleteCart, removeItemFromCa
 
 
 const Cart = () => {
+
   const notify = () => toast.success("order complete");
   let loggedIn = useSelector(selectLogged);
   const myCart = useSelector(selectMyCart);
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
   const [totall, settotall] = useState(0)
-  
 
+
+  const sumTotal =() =>{
+    let i =0;
+    let totprice =0;
+    while (i<myCart.length){
+      if(myCart[i].total>0){
+        totprice +=myCart[i].total;
+        i++;
+        settotall(totprice)
+      }
+      else{
+        i++;
+      }
+    }
+  
+  }
+  
+  useEffect(() => {
+    sumTotal();
+
+  }, [myCart.length])
   const Checkout = (myCart, token) =>{
     dispatch(addOrderAsync({ myCart, token }));
     dispatch(deleteCart())
@@ -34,32 +55,23 @@ const Cart = () => {
     <th>Price</th>
     <th>Amount</th>
   </tr>
-  {myCart.map(prod =><tr>
+  {myCart && myCart.map(prod => (<tr>
     <td>{prod.desc}</td>
     <td>{prod.price}₪</td>
-    <td><button onClick={() => dispatch(addItemToCart({ _id: prod._id, desc: prod.desc, price: prod.price, image: prod.image, amount: 1 ,total: 1}))}>+</button>
+    <td><Button onClick={() => dispatch(addItemToCart({ _id: prod._id, desc: prod.desc, price: prod.price, image: prod.image, amount: 1 ,total: 1}))}>+</Button>
     &nbsp; {prod.amount} &nbsp;
-    <button onClick={() => dispatch(addItemToCart({ _id: prod._id, desc: prod.desc, price: prod.price, image: prod.image, amount: -1, total: 1 }))}>-</button>
+    <Button onClick={() => dispatch(addItemToCart({ _id: prod._id, desc: prod.desc, price: prod.price, image: prod.image, amount: -1, total: 1 }))}>-</Button>
     </td>
     <td><Button onClick={() => dispatch(removeItemFromCart(prod._id))}>Delete</Button></td>
-    {/* <td><button onClick={() => {DelFromCart(prod._id)}}>delete</button></td> */}
-    </tr>)}
+    <tr>{prod.total} total</tr>
+    </tr> ))}
 </table>
 
 <h3 align="center">Total amount:{totall}₪</h3>
 
       {token &&<div>
         <div align="center">
-{/* <form>
-     <h2>Credit card checkout</h2>
-     <h6>Cardholder's Full Name:</h6>
-     <input label="Cardholder's Name" type="text" placeholder="Cardholder's name" /><br></br><br></br>
-     <input label="Card Number" type="number" name="card_number" placeholder='Card Number' imgSrc="https://seeklogo.com/images/V/visa-logo-6F4057663D-seeklogo.com.png" /><br></br><br></br>
-          <input label="Expiration Date" type="month" name="exp_date" placeholder='Expiration Date' />{" "}
-          <input label="CVV" type="number" name="cvv" placeholder='CVV' />
 
-      <Button text="Place order" />
-      </form> */}
 
  </div>
         <Button variant='outlined' onClick={() =>{notify();Checkout();setTimeout(function() {window.location.replace('/home');}, 2000)}}>Make order</Button>

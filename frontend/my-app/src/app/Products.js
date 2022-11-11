@@ -21,11 +21,13 @@ const Products = () => {
   const products = useSelector(selectProducts);
   const userName = useSelector(selectUserName);
   const dispatch = useDispatch();
+  const myCart = useSelector(selectMyCart)
   const token = useSelector(selectToken);
   // const amount = useSelector(selectamount);
   //run every change in the length of myCart
 
   useEffect(() => {
+    console.table(myCart)
     dispatch(getProductsAsync(token));
   }, []);
 
@@ -47,7 +49,7 @@ const Products = () => {
           <Card.Text >
           </Card.Text>
         </Card.Body>
-        <Button variant="outlined" onClick={() => dispatch(addItemToCart({ _id: prod.id, desc: prod.desc, amount: 1,price:prod.price }))}>
+        <Button variant="outlined" onClick={() => dispatch(addItemToCart({ _id: prod.id, desc: prod.desc, amount: 1,price:prod.price,total: prod.price }))}>
         Add to Cart
         </Button>  
         </Card>
